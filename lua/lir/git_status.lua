@@ -170,8 +170,6 @@ local setup_highlight = function()
   vim.cmd [[highlight default link LirGitStatusUnmerged ErrorMsg]]
   vim.cmd [[highlight default link LirGitStatusUntracked Comment]]
   vim.cmd [[highlight default link LirGitStatusIgnored Comment]]
-
-  vim.cmd [[highlight default link LirGitStatusDirChanges Comment]]
 end
 
 

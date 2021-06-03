@@ -26,7 +26,6 @@ highlight link LirGitStatusWorktree WarningMsg
 highlight link LirGitStatusUnmerged ErrorMsg
 highlight link LirGitStatusUntracked Comment
 highlight link LirGitStatusIgnored Comment
-highlight link LirGitStatusDirChanges Comment
 ```
 
 
