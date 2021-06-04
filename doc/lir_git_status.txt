@@ -1,0 +1,80 @@
+*lir-git-status*
+
+
+==============================================================================
+INTRODUCTION                                     *lir-git-status-introduction*
+
+Git status integration of |lir.nvim|
+
+
+==============================================================================
+INTERFACE                                           *lir-git-status-interface*
+
+
+------------------------------------------------------------------------------
+FUNCTIONS                                           *lir-git-status-functions*
+
+lir.git_status.setup([{opts}])                        *lir.git_status.setup()*
+   Set up the lir.
+   Please see |lir-git-status-settings|.
+
+
+==============================================================================
+SETTINGS                                             *lir-git-status-settings*
+
+You can set it with |lir.git_status.setup()|.
+
+default value: >
+
+    {
+      show_ignored = false
+    }
+<
+
+show_ignored                             *lir-git-status-settings-show_ignored*
+    Show the status of ignored files?
+
+
+------------------------------------------------------------------------------
+HIGHLIGHTS                                          *lir-git-status-highlight*
+
+TODO
+
+LirGitStatusBracket                                      *LirGitStatusBracket*
+
+    Default: `highlight default link LirGitStatusBracket Comment`
+
+
+LirGitStatusIndex                                      *LirGitStatusIndex*
+
+    Default: `highlight default link LirGitStatusIndex Special`
+
+
+LirGitStatusWorktree                                    *LirGitStatusWorktree*
+
+    Default: `highlight default link LirGitStatusWorktree WarningMsg`
+
+
+LirGitStatusUnmerged                                    *LirGitStatusUnmerged*
+
+    Default: `highlight default link LirGitStatusUnmerged ErrorMsg`
+
+
+LirGitStatusUntracked                                  *LirGitStatusUntracked*
+
+    Default: `highlight default link LirGitStatusUntracked Comment`
+
+
+LirGitStatusIgnored                                  *LirGitStatusIgnored*
+
+    Default: `highlight default link LirGitStatusIgnored Comment`
+
+
+==============================================================================
+EXAMPLES                                             *lir-git-status-examples*
+
+TODO
+
+==============================================================================
+vim:tw=78:sw=4:sts=4:ts=4:ft=help:norl:et
+
