@@ -76,13 +76,19 @@ end)
 ---@param cwd string
 ---@return table
 M.get_status = async(function(cwd)
+  local args = {
+    'status',
+    '--porcelain',
+    '-u'
+  }
+
+  if config.get('show_ignored') then
+    table.insert(args, '--ignored')
+  end
+
   local err, res = await(command({
     command = 'git',
-    args = {
-      'status',
-      '--porcelain',
-      '-u'
-    },
+    args = args,
     cwd = cwd
   }))
 

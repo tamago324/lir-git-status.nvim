@@ -14,7 +14,9 @@ Plug 'tamago324/lir-git-status.nvim'
 ## Usage
 
 ```
-require'lir.git_satus'.setup()
+require'lir.git_satus'.setup({
+  show_ignored = false
+})
 ```
 
 ### Change highlights groups

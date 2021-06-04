@@ -2,7 +2,8 @@
 -- Private
 -----------------------------
 local defaults_values = {
-  debug = false
+  debug = false,
+  show_ignored = false
 }
 
 
