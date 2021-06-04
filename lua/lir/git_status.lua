@@ -11,10 +11,11 @@ local M = {}
 
 
 ---comment
+---@param bufnr number
 ---@param lnum number
 ---@param us string
 ---@param them string
-local set_virtual_text = async(function(lnum, us, them)
+local set_virtual_text = async(function(bufnr, lnum, us, them)
   local texts = {}
   table.insert(texts, { '[', 'LirGitStatusBracket' })
 
@@ -37,7 +38,9 @@ local set_virtual_text = async(function(lnum, us, them)
 
   -- vim.api を実行できるまで待機
   await(a.scheduler())
-  vim.api.nvim_buf_set_virtual_text(0, -1, lnum - 1, texts, {})
+  if vim.api.nvim_buf_is_valid(bufnr) then
+    vim.api.nvim_buf_set_virtual_text(bufnr, -1, lnum - 1, texts, {})
+  end
 end)
 
 
@@ -73,6 +76,7 @@ end
 M.refresh = async_void(function()
   local ctx = lir.get_context()
   local cwd = ctx.dir
+  local bufnr = vim.api.nvim_get_current_buf()
 
   local root = await(git.get_root(cwd))
   if root == nil then
@@ -121,7 +125,7 @@ M.refresh = async_void(function()
     if not ctx.files[lnum].is_dir then
       local us = status:sub(1, 1)
       local them = status:sub(2, 2)
-      await(set_virtual_text(lnum, us, them))
+      await(set_virtual_text(bufnr, lnum, us, them))
 
     else
       -- ディレクトリ
@@ -156,7 +160,7 @@ M.refresh = async_void(function()
     local them = (status.them and '-') or ' '
 
     if us ~= ' ' or them ~= ' ' then
-      await(set_virtual_text(lnum, us, them))
+      await(set_virtual_text(bufnr, lnum, us, them))
     end
   end
 end)
