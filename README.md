@@ -14,7 +14,7 @@ Plug 'tamago324/lir-git-status.nvim'
 ## Usage
 
 ```
-require'lir.git_satus'.setup({
+require'lir.git_status'.setup({
   show_ignored = false
 })
 ```
