@@ -45,7 +45,7 @@ highlight link LirGitStatusIgnored Comment
 
 ## Screenshots
 
-* TODO
+![](https://github.com/tamago324/images/blob/master/lir-git-status.nvim/lir-git-status1.png)
 
 ## License
 
