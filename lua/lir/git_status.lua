@@ -83,7 +83,7 @@ M.refresh = async_void(function()
     return
   end
 
-  local results = await(git.get_status(root))
+  local results = await(git.get_status(root, { cwd }))
   if results == nil then
     return
   end
@@ -94,16 +94,21 @@ M.refresh = async_void(function()
   -- 完了したディレクトリのリスト
   local dirs = {}
   for i = 1, #ctx.files do
-    dirs[i] = {
-      us = false,
-      them = false
-    }
+    dirs[i] = {}
   end
+
+  local all_ignored = false
 
   for _, line in ipairs(results) do
     local path, status = parse_status(line)
 
-    if not path:match('^' .. rel_cwd) then
+    if status == '!!' and (#path < #rel_cwd or path == rel_cwd) then
+      -- All files in this folder are ignored
+      all_ignored = true
+      break
+    end
+
+    if not path:match('^' .. vim.pesc(rel_cwd)) then
       goto continue
     end
 
@@ -111,10 +116,13 @@ M.refresh = async_void(function()
     --           ^^^^^^^^^^
     -- もし、 path/to が cwd だとすると
     -- sample_dir が value となる
-    local value = path:sub(#rel_cwd+1):match('^/?([^/]+)')
+    local trunc_path = path:sub(#rel_cwd + 1):match('^/?(.-)/?$')
+    local value = trunc_path:match('^([^/]+)')
     if value == nil then
       goto continue
     end
+
+    local exact_match = trunc_path == value
 
     -- 行番号を取得
     local lnum = ctx:indexof(value)
@@ -122,7 +130,7 @@ M.refresh = async_void(function()
       goto continue
     end
 
-    if not ctx.files[lnum].is_dir then
+    if not ctx.files[lnum].is_dir or (exact_match and status == '!!') then
       local us = status:sub(1, 1)
       local them = status:sub(2, 2)
       await(set_virtual_text(bufnr, lnum, us, them))
@@ -135,17 +143,17 @@ M.refresh = async_void(function()
       -- form fean-git-status.vim
       if not dic.us
           and match(status, {'[MARC][ MD]', 'D[ RC]'}) then
-        dic.us = true
+        dic.us = '-'
       end
 
       if not dic.them
           and match(status, {
-            '??',
+            '%?%?',
             '[ MARC][MD]',
             '[ D][RC]',
             'DD|DU|UD|UU|UA|AA|AU',
           }) then
-        dic.them = true
+        dic.them = '-'
       end
 
     end
@@ -156,8 +164,13 @@ M.refresh = async_void(function()
 
   -- ディレクトリのステータスを表示
   for lnum, status in ipairs(dirs) do
-    local us = (status.us and '-') or ' '
-    local them = (status.them and '-') or ' '
+    local us, them
+    if all_ignored then
+      us, them = '!', '!'
+    else
+      us = status.us or ' '
+      them = status.them or ' '
+    end
 
     if us ~= ' ' or them ~= ' ' then
       await(set_virtual_text(bufnr, lnum, us, them))
