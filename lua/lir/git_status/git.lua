@@ -74,8 +74,9 @@ end)
 
 --- cwd の git status を返す
 ---@param cwd string
+---@param paths string[]
 ---@return table
-M.get_status = async(function(cwd)
+M.get_status = async(function(cwd, paths)
   local args = {
     'status',
     '--porcelain',
@@ -83,7 +84,14 @@ M.get_status = async(function(cwd)
   }
 
   if config.get('show_ignored') then
-    table.insert(args, '--ignored')
+    table.insert(args, '--ignored=matching')
+  end
+
+  if type(paths) == 'table' then
+    args[#args+1] = '--'
+    for _, path in ipairs(paths) do
+      args[#args+1] = path
+    end
   end
 
   local err, res = await(command({
