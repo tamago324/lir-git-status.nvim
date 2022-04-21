@@ -5,6 +5,9 @@ local await = a.await
 local lir = require'lir'
 local config = require'lir.git_status.config'
 local git = require'lir.git_status.git'
+local Path = require('plenary.path')
+
+local sep = Path.path.sep
 
 local M = {}
 
@@ -75,7 +78,9 @@ end
 
 M.refresh = async_void(function()
   local ctx = lir.get_context()
-  local cwd = ctx.dir
+  -- windows の場合、末尾に \ がついてしまうため、それの対応
+  -- \ を / にする
+  local cwd = ctx.dir:gsub(sep .. '$', ''):gsub(sep, '/')
   local bufnr = vim.api.nvim_get_current_buf()
 
   local root = await(git.get_root(cwd))
