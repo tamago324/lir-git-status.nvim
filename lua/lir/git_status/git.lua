@@ -69,6 +69,29 @@ M.get_root = async(function(cwd)
   return res[1]
 end)
 
+---Check if status for untracked files is enabled for a given git repo.
+---@param cwd string git top-level
+---@return boolean
+M.show_untracked = async(function(cwd)
+  local err, res = await(command({
+    command = 'git',
+    args = {
+      'config',
+      '--type=bool',
+      'status.showUntrackedFiles',
+    },
+    cwd = cwd,
+  }))
+
+  if err then
+    if config.get('debug') then
+      logger.error('show_untracked', err)
+    end
+    return nil
+  end
+
+  return vim.trim(res[1] or "") ~= "false"
+end)
 
 
 
@@ -77,13 +100,13 @@ end)
 ---@param paths string[]
 ---@return table
 M.get_status = async(function(cwd, paths)
+  local show_untracked = await(M.show_untracked(cwd))
   local args = {
     'status',
     '--porcelain',
-    '-u'
   }
 
-  if config.get('show_ignored') then
+  if show_untracked and config.get('show_ignored') then
     table.insert(args, '--ignored=matching')
   end
 
