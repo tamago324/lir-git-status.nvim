@@ -98,8 +98,9 @@ M.refresh = async_void(function()
 
   -- 完了したディレクトリのリスト
   local dirs = {}
-  for i = 1, #ctx.files do
-    dirs[i] = {}
+  for i, entry in ipairs(ctx.files) do
+    entry.git = entry.git or {}
+    dirs[i] = { entry = entry }
   end
 
   local all_ignored = false
@@ -138,6 +139,7 @@ M.refresh = async_void(function()
     if not ctx.files[lnum].is_dir or (exact_match and status == '!!') then
       local us = status:sub(1, 1)
       local them = status:sub(2, 2)
+      ctx.files[lnum].git.status = us .. them
       await(set_virtual_text(bufnr, lnum, us, them))
 
     else
@@ -178,6 +180,7 @@ M.refresh = async_void(function()
     end
 
     if us ~= ' ' or them ~= ' ' then
+      status.entry.git.status = us .. them
       await(set_virtual_text(bufnr, lnum, us, them))
     end
   end
