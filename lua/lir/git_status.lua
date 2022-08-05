@@ -93,6 +93,9 @@ M.refresh = async_void(function()
     return
   end
 
+  ctx.git = ctx.git or {}
+  ctx.git.toplevel = root
+
   -- root からの cwd の パス
   local rel_cwd = cwd:sub(#root+2)
 

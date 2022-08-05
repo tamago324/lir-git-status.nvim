@@ -19,6 +19,17 @@ lir.git_status.setup([{opts}])                        *lir.git_status.setup()*
    Please see |lir-git-status-settings|.
 
 ------------------------------------------------------------------------------
+LIR-GIT-STATUS-CONTEXT                                *lir-git-status-context*
+
+The |lir-context| tables are extended to contain additional data from git.
+
+context.git                                       *lir-git-status-context-git*
+    Git data.
+
+context.git.toplevel                     *lir-git-status-context-git-toplevel*
+    The path to the top-level directory of the working tree.
+
+------------------------------------------------------------------------------
 LIR-GIT-STATUS-FILE-ITEM                            *lir-git-status-file-item*
 
 The |lir-file-item| tables in the lir context are extended to contain
@@ -31,7 +42,7 @@ git.status                     *lir-git-status-file-item-attribute-git-status*
     If the file has a git status, this will be a two char string of git status
     symbols. The symbols can be one of: 
 
-    `A`, `?`, `M`, `R`, `C`, `T`, `U`, `X`, `D`, `B`, `-`
+    `A`, `M`, `R`, `C`, `T`, `U`, `X`, `D`, `B`, `?`, `!`, `-`
 
     See `:Man git-status(1)` for the definition of the different symbols. The
     special symbol "`-`" is used for directories that contain one or more
