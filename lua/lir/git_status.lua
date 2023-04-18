@@ -7,6 +7,7 @@ local config = require'lir.git_status.config'
 local git = require'lir.git_status.git'
 local Path = require('plenary.path')
 
+local fmt = string.format
 local sep = Path.path.sep
 
 local M = {}
@@ -88,7 +89,7 @@ M.refresh = async_void(function()
     return
   end
 
-  local results = await(git.get_status(root, { cwd }))
+  local results = await(git.get_status(root, { cwd, fmt(":!%s/*/*", cwd) }))
   if results == nil then
     return
   end
