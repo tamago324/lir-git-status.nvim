@@ -3,22 +3,42 @@ local async = a.async
 local await = a.await
 local Job = require'plenary.job'
 local logger = require('plenary.log')
+local uv = vim.loop
 
 local config = require'lir.git_status.config'
 
 local M = {}
 
+---@param cwd string?
+---@return boolean
+local is_accessible_directory = function(cwd)
+  if cwd == nil or cwd == '' then
+    return false
+  end
+
+  local stat = uv.fs_stat(cwd)
+  if stat == nil or stat.type ~= 'directory' then
+    return false
+  end
+
+  -- アクセスできるかもチェックする
+  return uv.fs_scandir(cwd) ~= nil
+end
+
 
 --- コマンドを実行する
 ---@param opts table
 ---@param callback function
----@return table err
----@return table results 結果のリスト
 local command = a.wrap(function(opts, callback)
   local results = {}
   local err = {}
 
-  Job:new({
+  if opts.cwd ~= nil and not is_accessible_directory(opts.cwd) then
+    callback({ string.format('cwd is not accessible: %s', opts.cwd) }, nil)
+    return
+  end
+
+  local job = Job:new({
     command = opts.command,
     args = opts.args,
     cwd = opts.cwd,
@@ -39,7 +59,14 @@ local command = a.wrap(function(opts, callback)
       callback(nil, results)
     end
 
-  }):start()
+  })
+
+  local ok, start_err = pcall(function()
+    job:start()
+  end)
+  if not ok then
+    callback({ tostring(start_err) }, nil)
+  end
 end, 2)
 
 
