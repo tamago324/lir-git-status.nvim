@@ -12,6 +12,17 @@ local sep = Path.path.sep
 
 local M = {}
 
+---@param dir string
+---@return string
+local normalize_cwd = function(dir)
+  dir = dir:gsub(sep, "/")
+  if dir == "/" or dir:match("^%a:/$") then
+    return dir
+  end
+  local result = dir:gsub("/$", "")
+  return result
+end
+
 
 
 ---comment
@@ -81,7 +92,7 @@ M.refresh = async_void(function()
   local ctx = lir.get_context()
   -- windows の場合、末尾に \ がついてしまうため、それの対応
   -- \ を / にする
-  local cwd = ctx.dir:gsub(sep .. '$', ''):gsub(sep, '/')
+  local cwd = normalize_cwd(ctx.dir)
   local bufnr = vim.api.nvim_get_current_buf()
 
   local root = await(git.get_root(cwd))
